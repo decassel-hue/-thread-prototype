@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f6f0e7">
+<title>THREAD v0.5</title>
+<style>
+:root{
+  --paper:#f8f3eb; --ink:#171714; --muted:#766f67; --olive:#444932;
+  --line:#ddd4c7; --chip:#e9e1d6; --white:#fff; --soft:#efe8dd;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+button{font:inherit}
+.phone{max-width:430px;margin:0 auto;min-height:100vh;background:var(--paper);position:relative;padding-bottom:92px;overflow-x:hidden}
+.top{padding:18px 17px 4px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:Georgia,serif;letter-spacing:.26em;font-size:17px;margin:auto}
+.plus{width:38px;height:38px;border-radius:50%;border:0;background:#171714;color:white;font-size:24px}
+.content{padding:4px 16px 25px}
+h1,h2,h3{font-family:Georgia,serif;margin:0}
+h1{font-size:38px;line-height:1.02}
+h2{font-size:27px}
+h3{font-size:21px}
+.sub{color:var(--muted);line-height:1.35}
+.context{margin:12px 0 12px}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.chip{border:0;background:var(--chip);border-radius:999px;padding:9px 14px;white-space:nowrap}
+.chip.active{background:#25251f;color:white}
+.hero{position:relative;height:500px;border-radius:26px;overflow:hidden;background:
+linear-gradient(180deg,#efe8df 0 62%,#ddd3c3 62%);}
+.avatar{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center}
+.avatar img{height:96%;max-width:100%;object-fit:contain}
+.fallback{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:58%;height:88%;border-radius:42% 42% 12% 12%/24% 24% 9% 9%;background:
+radial-gradient(circle at 50% 8%,#b98763 0 8%,transparent 8.5%),
+linear-gradient(180deg,transparent 0 16%,#4a5032 16% 50%,#eee5d6 50% 82%,#d7c8b2 82%);}
+.arrow{position:absolute;top:47%;width:42px;height:42px;border:0;border-radius:50%;background:#f1e9ddcc;font-size:25px}
+.arrow.left{left:12px}.arrow.right{right:12px}
+.lookmeta{position:absolute;left:16px;bottom:16px;background:#f8f3ebdd;backdrop-filter:blur(8px);border-radius:16px;padding:12px 13px;min-width:190px}
+.looknum{font-size:13px;color:var(--muted)}
+.looktitle{font-family:Georgia,serif;font-size:22px;margin-top:2px}
+.pieces{margin-top:4px;font-size:14px;line-height:1.35}
+.cta{width:100%;border:0;background:#171714;color:white;padding:16px;border-radius:18px;font-size:17px;margin-top:14px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.quick button{border:0;background:transparent;padding:11px 5px;color:#4d4842}
+.panel{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}
+.reason{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.reason:last-child{border-bottom:0}
+.icon{width:34px;height:34px;border-radius:11px;background:var(--soft);display:grid;place-items:center;flex:0 0 34px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#e6ddd0}
+.meta{padding:10px}.meta b{display:block}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:rgba(248,243,235,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 2px calc(8px + env(safe-area-inset-bottom));z-index:20}
+.nav button{border:0;background:none;color:#716b64;font-size:11px}.nav button.active{color:#111;font-weight:700}.nav span{display:block;font-size:19px;margin-bottom:2px}
+.sheet{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:40}
+.sheet.open{display:flex}
+.sheetbox{max-width:430px;width:100%;background:var(--paper);border-radius:25px 25px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.handle{width:44px;height:5px;border-radius:999px;background:#c7beb0;margin:0 auto 15px}
+.hidden{display:none!important}
+.small{font-size:13px}
+.stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="top">
+    <div style="width:38px"></div>
+    <div class="brand">THREAD</div>
+    <button class="plus" onclick="openAdd()">+</button>
+  </div>
+
+  <main class="content">
+    <section id="today">
+      <div class="context">
+        <div class="sub">Good morning,</div>
+        <h1>Daniel.</h1>
+        <div class="sub" style="margin-top:8px">Saturday · 12°C · dry</div>
+      </div>
+
+      <div class="chips" style="margin-bottom:12px">
+        <button class="chip active">Casual</button>
+        <button class="chip">Office</button>
+        <button class="chip">Evening</button>
+        <button class="chip">Sport</button>
+      </div>
+
+      <div class="hero" id="hero">
+        <div class="avatar">
+          <div class="fallback" id="fallback"></div>
+          <img id="avatarImg" class="hidden" alt="THREAD avatar">
+        </div>
+        <button class="arrow left" onclick="prevLook()">‹</button>
+        <button class="arrow right" onclick="nextLook()">›</button>
+        <div class="lookmeta">
+          <div class="looknum" id="lookNum">1 / 6</div>
+          <div class="looktitle" id="lookTitle">Olive Weekend</div>
+          <div class="pieces" id="lookPieces">Olive jacket<br>Ecru trousers<br>White tee</div>
+        </div>
+      </div>
+
+      <button class="cta">Wear this look →</button>
+      <div class="quick">
+        <button onclick="openWhy()">◉ Why this works</button>
+        <button onclick="toggleWardrobe()">▣ Use my wardrobe only</button>
+      </div>
+    </section>
+
+    <section id="inspo" class="hidden">
+      <h1>Inspo</h1>
+      <div class="sub" style="margin:8px 0 15px">Saved looks and screenshots</div>
+      <div class="grid">
+        <div class="card"><div class="img"></div><div class="meta"><b>Olive + Ecru</b><span class="sub small">Casual · Autumn</span></div></div>
+        <div class="card"><div class="img" style="background:#d9d1c4"></div><div class="meta"><b>Navy + Denim</b><span class="sub small">Weekend</span></div></div>
+      </div>
+    </section>
+
+    <section id="wardrobe" class="hidden">
+      <h1>Wardrobe</h1>
+      <div class="sub" style="margin:8px 0 15px">Your pieces</div>
+      <div class="grid">
+        <div class="card"><div class="img" style="background:#a9a68d"></div><div class="meta"><b>Olive Jacket</b></div></div>
+        <div class="card"><div class="img" style="background:#eee7da"></div><div class="meta"><b>Ecru Trousers</b></div></div>
+      </div>
+    </section>
+
+    <section id="you" class="hidden">
+      <h1>You</h1>
+      <div class="panel" style="margin-top:14px">
+        <h3>Your Style DNA</h3>
+        <div class="stat"><span>Heritage</span><b>84%</b></div>
+        <div class="stat"><span>Ivy</span><b>77%</b></div>
+        <div class="stat"><span>Workwear</span><b>72%</b></div>
+        <div class="stat"><span>Style coverage</span><b>68%</b></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav">
+    <button id="n-today" class="active" onclick="go('today')"><span>⌂</span>Today</button>
+    <button id="n-inspo" onclick="go('inspo')"><span>⌕</span>Inspo</button>
+    <button onclick="openAdd()"><span>＋</span>Add</button>
+    <button id="n-wardrobe" onclick="go('wardrobe')"><span>♧</span>Wardrobe</button>
+    <button id="n-you" onclick="go('you')"><span>◯</span>You</button>
+  </nav>
+</div>
+
+<div class="sheet" id="whySheet" onclick="closeSheets()">
+  <div class="sheetbox" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h2>Why this works</h2>
+    <div class="panel">
+      <div class="reason"><div class="icon">☀</div><div><b>Perfect for today</b><div class="sub small">12°C and dry — layered but relaxed.</div></div></div>
+      <div class="reason"><div class="icon">♧</div><div><b>Fits your style</b><div class="sub small">Strong match with your Heritage / Ivy / Workwear profile.</div></div></div>
+      <div class="reason"><div class="icon">✓</div><div><b>From your wardrobe</b><div class="sub small">4 of 5 pieces are already in your closet.</div></div></div>
+      <div class="reason"><div class="icon">☆</div><div><b>Unlocks more</b><div class="sub small">Pairs with 6 of your saved inspiration looks.</div></div></div>
+    </div>
+    <button class="cta" onclick="closeSheets()">Got it</button>
+  </div>
+</div>
+
+<div class="sheet" id="addSheet" onclick="closeSheets()">
+  <div class="sheetbox" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h2>Add</h2>
+    <div class="panel">
+      <div class="reason"><div class="icon">▧</div><div><b>Add Inspiration</b><div class="sub small">Import a screenshot or outfit photo.</div></div></div>
+      <div class="reason"><div class="icon">♧</div><div><b>Add Wardrobe Piece</b><div class="sub small">Add something from your closet.</div></div></div>
+      <div class="reason"><div class="icon">◎</div><div><b>Buy or Skip</b><div class="sub small">Check whether a new piece fits your style and unlocks looks.</div></div></div>
+    </div>
+    <button class="cta" onclick="closeSheets()">Close</button>
+  </div>
+</div>
+
+<script>
+const looks = [
+ {title:"Olive Weekend", pieces:["Olive jacket","Ecru trousers","White tee"]},
+ {title:"Rust & Navy", pieces:["Orange knit sweater","Navy chinos","White sneakers"]},
+ {title:"Relaxed Denim", pieces:["Charcoal jacket","Grey hoodie","Light denim"]},
+ {title:"Ivy Layering", pieces:["Navy cardigan","Blue Oxford","Ecru trousers"]},
+ {title:"Clean Casual", pieces:["Oatmeal knit","Olive trousers","Suede shoes"]},
+ {title:"Saturday City", pieces:["Brown overshirt","White tee","Dark navy trousers"]}
+];
+let idx=0, wardrobeOnly=false;
+
+function renderLook(){
+  const l=looks[idx];
+  document.getElementById('lookNum').textContent=`${idx+1} / ${looks.length}`;
+  document.getElementById('lookTitle').textContent=l.title;
+  document.getElementById('lookPieces').innerHTML=l.pieces.join('<br>');
+  const colors=[
+    ['#4c5335','#f1eadf','#d5c5ae'],
+    ['#a14f26','#243246','#e9e5de'],
+    ['#25282b','#bbb8ae','#b7c1c7'],
+    ['#263245','#d8dfdf','#eee5d6'],
+    ['#d8cab2','#59603b','#76573f'],
+    ['#704833','#f1ece4','#243246']
+  ][idx];
+  document.getElementById('fallback').style.background =
+    `radial-gradient(circle at 50% 8%,#b98763 0 8%,transparent 8.5%),
+     linear-gradient(180deg,transparent 0 16%,${colors[0]} 16% 50%,${colors[1]} 50% 82%,${colors[2]} 82%)`;
+}
+function nextLook(){idx=(idx+1)%looks.length;renderLook()}
+function prevLook(){idx=(idx-1+looks.length)%looks.length;renderLook()}
+function openWhy(){document.getElementById('whySheet').classList.add('open')}
+function openAdd(){document.getElementById('addSheet').classList.add('open')}
+function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'))}
+function toggleWardrobe(){
+  wardrobeOnly=!wardrobeOnly;
+  event.currentTarget.textContent = wardrobeOnly ? "✓ My wardrobe only" : "▣ Use my wardrobe only";
+}
+function go(id){
+  ['today','inspo','wardrobe','you'].forEach(s=>document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  ['today','inspo','wardrobe','you'].forEach(s=>{
+    document.getElementById('n-'+s)?.classList.toggle('active',s===id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+let touchStartX=0, touchEndX=0;
+const hero=document.getElementById('hero');
+hero.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});
+hero.addEventListener('touchend',e=>{
+  touchEndX=e.changedTouches[0].screenX;
+  const dx=touchEndX-touchStartX;
+  if(Math.abs(dx)>45){ dx<0 ? nextLook() : prevLook(); }
+},{passive:true});
+renderLook();
+</script>
+</body>
+</html>
